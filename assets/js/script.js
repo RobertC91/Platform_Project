@@ -139,3 +139,38 @@ const levelCharacters = {
 let simpleLevel = new Level(simpleLevelPlan);
 console.log(`${simpleLevel.width} by ${simpleLevel.height}`);
 // 22px by 9px
+
+// =============Generate Game==================
+
+// Generate Game using DOMDisplay
+function generateGame(name, attrs, ...children) {
+  let dom = document.createElement(name);
+  for (let attr of Object.keys(attrs)) {
+    dom.setAttribute(attr, attrs[attr]);
+  }
+  for (let child of children) {
+    dom.appendChild(child);
+  }
+  return dom;
+}
+
+class DOMDisplay {
+  constructor(parent, level) {
+    this.dom = generateGame("div", {class: "game"}, drawGrid(level));
+    this.actorLayer = null;
+    parent.appendChild(this.dom)
+  }
+  clear() {this.dom.remove();}
+}
+
+const scale = 20;
+
+function drawGrid(level) {
+  return generateGame("table", {
+    class: "background",
+    style: `width: ${level.width * scale}px`
+  }, ...level.rows.map(row => 
+    generateGame("tr", {style: `height: ${scale}px`},
+                  ...row.map(type => generateGame("td", {class: type})))
+  ));
+}
